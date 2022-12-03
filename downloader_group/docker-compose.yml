@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  downloader1:
+    container_name: "downloader1"
+    build: "./downloader"
+    volumes:
+      - ./downloader/:/app:delegated
+    ports:
+      - "8080:8000"
+    networks:
+      - kafka-network
+    command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload
+
+networks:
+  kafka-network:
+    external: true

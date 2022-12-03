@@ -39,6 +39,6 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         reload=True,
-        port=int("8001"),
+        port=int("8000"),
     )
     

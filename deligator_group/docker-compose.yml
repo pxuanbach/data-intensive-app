@@ -10,6 +10,8 @@ services:
       - app-db-data:/var/lib/postgresql/data:cached
     ports:
     - "54321:5432"
+    networks:
+      - kafka-network
     healthcheck:
       test: pg_isready -U postgres
       interval: 3s
@@ -38,8 +40,8 @@ services:
     volumes:
       - ./image_host/:/app:delegated
     ports:
-      - "8001:8001"
-    command: uvicorn --port 8001 --host 0.0.0.0 main:app --reload
+      - "8001:8000"
+    command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload
 
 volumes:
   app-db-data:
