@@ -1,3 +1,15 @@
+# User Guide
+
+### Docker-compose up all apps
+```bash
+./docker_up.cmd
+```
+
+### Docker-compose down all apps
+```bash
+./docker_down.cmd
+```
+
 ### Init database
 ```
 docker-compose exec postgres createdb <service-db> -U postgres

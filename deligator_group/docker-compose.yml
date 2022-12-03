@@ -24,6 +24,8 @@ services:
     env_file: ./deligator/.env
     ports:
       - "8000:8000"
+    networks:
+      - kafka-network
     command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload
     depends_on:
       postgres:
@@ -31,7 +33,8 @@ services:
 
   image_host:
     container_name: "image_host"
-    build: "./image_host"
+    image: pxuanbach/fastapi-pg:latest
+    # build: "./image_host"
     volumes:
       - ./image_host/:/app:delegated
     ports:
@@ -40,3 +43,7 @@ services:
 
 volumes:
   app-db-data:
+
+networks:
+  kafka-network:
+    external: true

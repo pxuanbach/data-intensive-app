@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     # class Config:
     #     env_file = ".env"
     #     env_file_encoding = "utf-8"
+
     API_PATH: str = "/api/v1"
     SECRET_KEY: str
     DATABASE_URL: PostgresDsn
@@ -24,5 +25,8 @@ class Settings(BaseSettings):
         """Builds ASYNC_DATABASE_URL from DATABASE_URL."""
         v = values["DATABASE_URL"]
         return v.replace("postgresql", "postgresql+asyncpg") if v else v
+
+    BOOTSTRAP_SERVERS: str
+    KAFKA_INSTANCE = "kafka:9093"
 
 settings = Settings()

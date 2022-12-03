@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(
-    title="Deligator API",
+    title="Image Host API",
     description="Development",
     version="1.0",
     default_response_class=ORJSONResponse

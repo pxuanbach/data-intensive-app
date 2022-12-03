@@ -1,0 +1,1 @@
+docker-compose exec kafka /usr/bin/kafka-console-producer --topic test1 --bootstrap-server localhost:9092

@@ -1,6 +1,6 @@
 import random
 from typing import Any
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -25,7 +25,7 @@ async def get_images(
     )
     return {
         "total": len(images),
-        "images": images
+        # "images": images[0:10]
     }
 
 
@@ -33,7 +33,7 @@ async def get_images(
 async def insert_images(
     session: AsyncSession = Depends(get_async_session)
 ) -> Any:
-    """Init 1000 image"""
+    """Init 10000 image"""
     urls = [
         "http://localhost:8001/static/image_1.jpg",
         "http://localhost:8001/static/image_2.jpg",
@@ -42,7 +42,7 @@ async def insert_images(
         "http://localhost:8001/static/image_5.jpg",
     ]
     db_obj_arr = []
-    for i in range(0, 1000):
+    for i in range(0, 10000):
         image = Image(
             img_url=urls[random.randint(0, 4)],
             done=False
@@ -50,7 +50,10 @@ async def insert_images(
         db_obj_arr.append(image)
     session.add_all(db_obj_arr)
     await session.commit()
-    return db_obj_arr
+    return {
+        "total": len(db_obj_arr),
+        # "images": db_obj_arr[0:10]
+    }
 
 
 @router.delete("")
