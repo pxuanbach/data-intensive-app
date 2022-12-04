@@ -6,6 +6,7 @@ from aiokafka import AIOKafkaProducer
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+import random
 
 from config import settings
 from deps.db import get_async_session
@@ -39,29 +40,29 @@ loop = asyncio.get_event_loop()
 aioproducer = AIOKafkaProducer(loop=loop, bootstrap_servers=settings.KAFKA_INSTANCE)
 
 
+# @router.post("/{topicname}")
+# async def kafka_produce(msg: ProducerMessage, topicname: str):
+#     await aioproducer.send(topicname, json.dumps(msg.dict()).encode("ascii"))
+#     response = ProducerResponse(
+#         name=msg.name, message_id=msg.message_id, topic=topicname
+#     )
+#     return response
+
+
 @router.post("/{topicname}")
-async def kafka_produce(msg: ProducerMessage, topicname: str):
-    await aioproducer.send(topicname, json.dumps(msg.dict()).encode("ascii"))
-    response = ProducerResponse(
-        name=msg.name, message_id=msg.message_id, topic=topicname
-    )
-    return response
-
-
-@router.post("/start/{topicname}")
 async def start_deligate(
     topicname: str,
     session: AsyncSession = Depends(get_async_session)
 ) -> Any:
-    images: List[Image] = (
+    images: Image = (
         (
-            await session.execute(select(Image))
+            await session.execute(select(Image).offset(random.randint(0, 10)))
         )
-        .scalars().all()
+        .scalars().first()
     )
     await session.commit()
-    for obj in images:
-        obj = ImageSchema.from_orm(obj)
-        await aioproducer.send(topicname, json.dumps(obj.dict()).encode("ascii"))
-        await asyncio.sleep(2)
+    # for obj in images:
+    obj = ImageSchema.from_orm(images)
+    await aioproducer.send(topicname, json.dumps(obj.dict()).encode("ascii"))
+    await asyncio.sleep(0.5)
     return "Done!"

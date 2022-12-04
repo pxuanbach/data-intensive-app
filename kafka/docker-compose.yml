@@ -12,6 +12,9 @@ services:
       - kafka-network
     ports:
       - 2181:2181
+    volumes: 
+      - ./zoo/data:/var/lib/zookeeper/data
+      - ./zoo/log:/var/lib/zookeeper/log
 
   kafka:
     container_name: kafka
@@ -31,6 +34,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_CREATE_TOPICS: "test1:1:1"
+    volumes:
+      - ./broker/data:/var/lib/kafka/data
     depends_on:
       - zookeeper
 
