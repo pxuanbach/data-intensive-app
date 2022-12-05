@@ -48,8 +48,10 @@ services:
       - kafka-network
     environment:
       - ZK_HOSTS=zookeeper:2181
+    command: -Dpidfile.path=/dev/null
     depends_on:
       - zookeeper
+      - kafka
 
 networks:
   kafka-network:

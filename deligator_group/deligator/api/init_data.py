@@ -35,16 +35,16 @@ async def insert_images(
 ) -> Any:
     """Init 10000 image"""
     urls = [
-        "http://localhost:8001/static/image_1.jpg",
+        # "http://localhost:8001/static/image_1.jpg",
         "http://localhost:8001/static/image_2.jpg",
-        "http://localhost:8001/static/image_3.jpg",
-        "http://localhost:8001/static/image_4.jpg",
-        "http://localhost:8001/static/image_5.jpg",
+        # "http://localhost:8001/static/image_3.jpg",
+        # "http://localhost:8001/static/image_4.jpg",
+        # "http://localhost:8001/static/image_5.jpg",
     ]
     db_obj_arr = []
     for i in range(0, 10000):
         image = Image(
-            img_url=urls[random.randint(0, 4)],
+            img_url=urls[random.randint(0, len(urls)-1)],
             done=False
         )
         db_obj_arr.append(image)

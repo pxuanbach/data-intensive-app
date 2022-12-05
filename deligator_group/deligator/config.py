@@ -26,7 +26,7 @@ class Settings(BaseSettings):
         v = values["DATABASE_URL"]
         return v.replace("postgresql", "postgresql+asyncpg") if v else v
 
-    BOOTSTRAP_SERVERS: str
-    KAFKA_INSTANCE = "kafka:9093"
+    KAFKA_INSTANCE: str
+    LOG_PATH: str = "0logs.log"
 
 settings = Settings()

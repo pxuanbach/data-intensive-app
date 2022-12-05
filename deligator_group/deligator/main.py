@@ -2,10 +2,9 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from aiokafka import AIOKafkaProducer
 
 import api
-from config import settings
+from logger import logger
 from api.producer import aioproducer
 
 
@@ -16,7 +15,7 @@ app = FastAPI(
     default_response_class=ORJSONResponse
 )
 
-print(settings.KAFKA_INSTANCE)
+
 # loop = asyncio.get_event_loop()
 # aioproducer = AIOKafkaProducer(loop=loop, bootstrap_servers=settings.KAFKA_INSTANCE)
 # aioconsumer = AIOKafkaConsumer("test1", bootstrap_servers=settings.KAFKA_INSTANCE, loop=loop)
@@ -24,11 +23,13 @@ print(settings.KAFKA_INSTANCE)
 
 @app.on_event("startup")
 async def startup_event():
+    logger.info("Kafka Producer start")
     await aioproducer.start()
-
+    
 
 @app.on_event("shutdown")
 async def shutdown_event():
+    logger.info("Kafka Producer stop")
     await aioproducer.stop()
 
 

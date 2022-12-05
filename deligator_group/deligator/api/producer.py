@@ -54,15 +54,20 @@ async def start_deligate(
     topicname: str,
     session: AsyncSession = Depends(get_async_session)
 ) -> Any:
-    images: Image = (
+    images: List[Image] = (
         (
-            await session.execute(select(Image).offset(random.randint(0, 10)))
+            await session.execute(
+                select(Image)
+                # .offset(random.randint(0, 10))
+                # .limit(random.randint(0, 10))
+                .limit(1000)
+            )
         )
-        .scalars().first()
+        .scalars().all()
     )
     await session.commit()
-    # for obj in images:
-    obj = ImageSchema.from_orm(images)
-    await aioproducer.send(topicname, json.dumps(obj.dict()).encode("ascii"))
-    await asyncio.sleep(0.5)
+    for obj in images:
+        obj = ImageSchema.from_orm(obj)
+        await aioproducer.send(topicname, json.dumps(obj.dict()).encode("ascii"))
+        # await asyncio.sleep(0.3)
     return "Done!"
