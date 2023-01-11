@@ -1,0 +1,1 @@
+docker-compose exec deligator alembic upgrade head
