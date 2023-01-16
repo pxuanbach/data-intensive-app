@@ -1,1 +1,1 @@
-# data-intensive-app
+# Face Detection using OpenCV
