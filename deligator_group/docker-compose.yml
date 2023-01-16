@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: "postgres_db"
+    image: postgres:12
+    restart: always
+    env_file: ./deligator/.env
+    volumes:
+      - app-db-data:/var/lib/postgresql/data:cached
+    ports:
+    - "54321:5432"
+    networks:
+      - kafka-network
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 3s
+      timeout: 2s
+      retries: 3
+
+  deligator:
+    container_name: "deligator"
+    build: "./deligator"
+    volumes:
+      - ./deligator/:/app:delegated
+    env_file: ./deligator/.env
+    ports:
+      - "8000:8000"
+    networks:
+      - kafka-network
+    command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  image_host:
+    container_name: "image_host"
+    image: pxuanbach/fastapi-pg:latest
+    # build: "./image_host"
+    volumes:
+      - ./image_host/:/app:delegated
+    ports:
+      - "8001:8000"
+    command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload
+
+volumes:
+  app-db-data:
+
+networks:
+  kafka-network:
+    external: true
