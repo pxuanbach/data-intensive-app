@@ -16,7 +16,7 @@ consumer = AIOKafkaConsumer(
     bootstrap_servers=settings.KAFKA_INSTANCE, 
     loop=loop, 
     auto_offset_reset='earliest', 
-    group_id="1",
+    group_id=settings.KAFKA_CONSUMER_GROUP_ID,
     enable_auto_commit=False
 )
 

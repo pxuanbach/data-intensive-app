@@ -31,18 +31,19 @@ async def get_images(
 
 @router.post("")
 async def insert_images(
+    init_amount: int,
     session: AsyncSession = Depends(get_async_session)
 ) -> Any:
-    """Init 10000 image"""
+    """Init image"""
     urls = [
-        # "http://localhost:8001/static/image_1.jpg",
-        "http://localhost:8001/static/image_2.jpg",
-        # "http://localhost:8001/static/image_3.jpg",
-        # "http://localhost:8001/static/image_4.jpg",
-        # "http://localhost:8001/static/image_5.jpg",
+        "http://localhost:8001/static/1.jpg",
+        "http://localhost:8001/static/2.jpg",
+        "http://localhost:8001/static/3.jpg",
+        "http://localhost:8001/static/4.jpg",
+        "http://localhost:8001/static/5.jpg",
     ]
     db_obj_arr = []
-    for i in range(0, 10000):
+    for i in range(0, init_amount):
         image = Image(
             img_url=urls[random.randint(0, len(urls)-1)],
             done=False
@@ -52,7 +53,7 @@ async def insert_images(
     await session.commit()
     return {
         "total": len(db_obj_arr),
-        # "images": db_obj_arr[0:10]
+        "images": db_obj_arr[0:10]
     }
 
 

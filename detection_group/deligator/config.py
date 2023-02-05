@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     API_PATH: str = "/api/v1"
     KAFKA_INSTANCE: str
-    LOG_PATH: str = "0logs.log"
+    KAFKA_CONSUMER_GROUP_ID: str
+    LOG_PATH: str = "./static/0logs.log"
 
 settings = Settings()

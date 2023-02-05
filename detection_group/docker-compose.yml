@@ -1,17 +1,50 @@
 version: "3.9"
 
 services:
-  deligator:
-    container_name: "deligator"
-    build: "./deligator"
+  # deligator1:
+  #   container_name: "detect_deligator1"
+  #   build: "./deligator"
+  #   volumes:
+  #     - ./deligator/:/app:delegated
+  #     - ./deligator1/:/app/static
+  #   ports:
+  #     - "8800:8000"
+  #   env_file:
+  #     - "./deligator/.env"
+  #   environment:
+  #     - KAFKA_CONSUMER_GROUP_ID=detect_1
+  #   networks:
+  #     - kafka-network
+  #   command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload
+
+  detect_body:
+    container_name: "detect_body"
+    build: "./detect_body"
     volumes:
-      - ./deligator/:/app:delegated
+      - ./detect_body/:/app:delegated
     ports:
       - "8800:8000"
-    # env_file:
-    #   - "./deligator/.env"
+    env_file:
+      - "./detect_body/.env"
     environment:
       - SERVER_HOST=http://localhost:8800
+      - KAFKA_CONSUMER_GROUP_ID=detect_body
+    networks:
+      - kafka-network
+    command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload
+  
+  detect_face:
+    container_name: "detect_face"
+    build: "./detect_face"
+    volumes:
+      - ./detect_face/:/app:delegated
+    ports:
+      - "8801:8000"
+    env_file:
+      - "./detect_face/.env"
+    environment:
+      - SERVER_HOST=http://localhost:8801
+      - KAFKA_CONSUMER_GROUP_ID=detect_face
     networks:
       - kafka-network
     command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload

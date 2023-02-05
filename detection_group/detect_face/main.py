@@ -1,4 +1,6 @@
 import base64
+from io import BytesIO
+import json
 from typing import Any
 from fastapi import FastAPI, Body, Depends
 from fastapi.responses import ORJSONResponse
@@ -12,8 +14,6 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy import select, func
 import asyncio
 from aiokafka import AIOKafkaConsumer
-from io import BytesIO
-import json
 
 from config import settings
 from models import DetectModel
@@ -77,6 +77,8 @@ async def consume():
                     db.commit()
             except Exception as e:
                 logger.error(str(e))
+            # if isinstance(msg.value, dict):
+            #     pass
             # elif isinstance(msg.value, bytes):
             #     image = Image.open(BytesIO(msg.value))
             #     img = np.array(image)
@@ -97,7 +99,7 @@ async def consume():
 
 
 app = FastAPI(
-    title="Detect Body",
+    title="Detect Face",
     description="Development",
     version="1.0",
     default_response_class=ORJSONResponse
@@ -200,6 +202,7 @@ async def clear_result(
         await session.delete(db_obj)
     await session.commit()
     return "Success!"
+
 
 
 if __name__ == "__main__":

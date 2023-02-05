@@ -6,7 +6,7 @@ from db import Base
 
 
 class DetectModel(Base):
-    __tablename__ = "detect_body"
+    __tablename__ = "detect_face"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     img_id = Column(Integer)
