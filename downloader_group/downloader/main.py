@@ -23,7 +23,7 @@ consumer = AIOKafkaConsumer(
     "test1", 
     bootstrap_servers=settings.KAFKA_INSTANCE, 
     loop=loop, 
-    auto_offset_reset='earliest', 
+    auto_offset_reset="earliest",
     group_id="1",
     enable_auto_commit=False
 )
@@ -95,8 +95,25 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.on_event("startup")
 async def startup_event():
+    connected = False
+    while not connected:
+        try:
+            await aioproducer.start()
+            connected = True
+        except:
+            logger.error("Kafka Producer retry connect")
+            await asyncio.sleep(3)
+    logger.info("Kafka Producer connected")
     loop.create_task(consume())
-    await aioproducer.start()
+    # connected = False
+    # while not connected:
+    #     try:
+    #         await aioproducer.start()
+    #         connected = True
+    #     except:
+    #         logger.error("Kafka Producer retry connect")
+    #         await asyncio.sleep(3)
+    # logger.info("Kafka Producer connected")
 
 
 @app.on_event("shutdown")

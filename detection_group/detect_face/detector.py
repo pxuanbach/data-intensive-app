@@ -37,7 +37,7 @@ def _detect(img_id, image) -> List[dict]:
             "width_of_img": float(width),
             "height_of_img": float(height),
         })
-    logger.info(f"img_id {img_id} - Human Detected: {len(faces)}{log}")
+    logger.info(f"img_id {img_id} - Face Detected: {len(faces)}{log}")
     # cv2.imwrite("detected.png", image) 
     return data
     # cv2.imwrite("detected.png", image) 

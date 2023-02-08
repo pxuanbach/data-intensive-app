@@ -23,8 +23,16 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("Kafka Producer start")
-    await aioproducer.start()
+    connected = False
+    while not connected:
+        try:
+            await aioproducer.start()
+            connected = True
+        except:
+            await aioproducer.stop()
+            logger.error("Kafka Producer retry connect")
+            await asyncio.sleep(3)
+    logger.info("Kafka Producer connected")
     
 
 @app.on_event("shutdown")

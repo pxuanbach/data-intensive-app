@@ -20,6 +20,7 @@ from models import DetectModel
 from logger import logger
 from db import SessionLocal, async_session_maker
 from detector import _detect
+from trace_timer import TraceTimer
 
 
 def get_db() -> Generator:
@@ -49,13 +50,15 @@ consumer = AIOKafkaConsumer(
 
 
 async def consume():
-    await consumer.start()
+    # await consumer.start()
     try:
         async for msg in consumer:
             db = SessionLocal(future=True)
             # logger.info(
             #     f"consumed: {msg.topic}, {msg.partition}, {msg.offset}, {msg.key}, {msg.value}, {msg.timestamp}"
             # )
+            timer = TraceTimer(timer_type="performance")
+            timer.start()
             try:
                 if isinstance(json.loads(msg.value), dict):
                     _data = json.loads(msg.value)
@@ -77,6 +80,9 @@ async def consume():
                     db.commit()
             except Exception as e:
                 logger.error(str(e))
+            timer.stop()
+            logger.debug(f"{msg.topic}_{msg.partition} {msg.offset} Trace time {timer.time_sec} s")
+            await consumer.commit()
             # elif isinstance(msg.value, bytes):
             #     image = Image.open(BytesIO(msg.value))
             #     img = np.array(image)
@@ -115,6 +121,15 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
+    connected = False
+    while not connected:
+        try:
+            await consumer.start()
+            connected = True
+        except:
+            logger.error("Kafka Consumer retry connect")
+            await asyncio.sleep(3)
+    logger.info("Kafka Consumer connected")
     loop.create_task(consume())
 
 

@@ -1,6 +1,6 @@
 import asyncio
 import json
-from typing import Any, List
+from typing import Any, List, Optional
 from pydantic import BaseModel, StrictStr
 from aiokafka import AIOKafkaProducer
 from fastapi import APIRouter, Depends, HTTPException
@@ -60,7 +60,7 @@ async def start_deligate(
                 select(Image)
                 # .offset(random.randint(0, 10))
                 # .limit(random.randint(0, 10))
-                .limit(1000)
+                # .limit(1000)
             )
         )
         .scalars().all()
