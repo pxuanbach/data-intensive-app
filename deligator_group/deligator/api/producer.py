@@ -3,7 +3,7 @@ import json
 from typing import Any, List, Optional
 from pydantic import BaseModel, StrictStr
 from aiokafka import AIOKafkaProducer
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Form, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 import random
@@ -49,9 +49,9 @@ aioproducer = AIOKafkaProducer(loop=loop, bootstrap_servers=settings.KAFKA_INSTA
 #     return response
 
 
-@router.post("/{topicname}")
+@router.post("")
 async def start_deligate(
-    topicname: str,
+    topicname: str = Form("test1"),
     session: AsyncSession = Depends(get_async_session)
 ) -> Any:
     images: List[Image] = (

@@ -69,11 +69,11 @@ async def consume():
                     db_obj_arr = []
                     for obj in result:
                         if isinstance(obj, dict):
-                            db_obj = DetectModel(**obj, img_id=1)
+                            db_obj = DetectModel(**obj, img_id=img_id)
                             db_obj_arr.append(db_obj)
                         else:
                             obj = dict(obj)
-                            db_obj = DetectModel(**obj, img_id=2)
+                            db_obj = DetectModel(**obj, img_id=img_id)
                             db_obj_arr.append(db_obj)
                     db.add_all(db_obj_arr)
                     db.commit()

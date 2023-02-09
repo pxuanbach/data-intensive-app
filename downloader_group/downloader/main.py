@@ -58,18 +58,17 @@ async def consume():
                     if res.status_code == 200:
                         image = Image.open(res.raw)
                         image.thumbnail((800, 800))
+                        timer.stop()
+                        logger.debug(f"{msg.topic}_{msg.partition} {msg.offset} {msg.value}")
+                        logger.debug(f"{msg.topic}_{msg.partition} {msg.offset} Trace time {timer.time_sec} s")
                         img_byte_arr = io.BytesIO()
                         image.save(img_byte_arr, format="PNG")
                         img_byte_arr = img_byte_arr.getvalue()
-                        
                         encoded = base64.b64encode(img_byte_arr)
                         # logger.info(type(encoded))
                         await aioproducer.send("detect", json.dumps({"img_id": img_id, "bytes": encoded.decode('utf-8')}).encode("ascii"))
             except Exception as e:
                 logger.error(str(e))
-            timer.stop()
-            logger.debug(f"{msg.topic}_{msg.partition} {msg.offset} {msg.value}")
-            logger.debug(f"{msg.topic}_{msg.partition} {msg.offset} Trace time {timer.time_sec} s")
             await consumer.commit()
 
     finally:
